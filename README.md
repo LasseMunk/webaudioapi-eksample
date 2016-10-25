@@ -77,3 +77,9 @@ Daniel Shiffman about socket.io
 **This example is using port 3000**
 
 
+## osc
+osc library to communicate between Max and our node.js server
+
+## fs (filesystem)
+used to create the client files som our src folder
+
