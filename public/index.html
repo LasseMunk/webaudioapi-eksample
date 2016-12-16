@@ -27,10 +27,11 @@
 			<input id="mstrGain" type="range" min="0" max="1" step="0.001" value="0.5"/>volume<br>
 			<input id="panStereo" type="range" min="0.001" max="0.999" step="0.001" value="0.5"/>pan<br>
 
-			<button id="play" onclick="ampEnv()">play</button><br>
+			<button id="play" onclick="trigVoice.play()">play</button><br>
 
 			<script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
-			<script type="text/javascript" src="/webaudio/fmbasic.js"></script>
+			<script type="text/javascript" src="/webaudio/fmVoice.js"></script>
+			<script type="text/javascript" src="/webaudio/fmSeq.js"></script>
 			<script type="text/javascript" src="/js/client.js"></script>
 
 	</body>

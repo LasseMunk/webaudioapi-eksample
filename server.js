@@ -26,9 +26,6 @@ app.use(express.static('public')); 	// serve the static files found in the 'publ
 	generate client side files from src folder
 
    -------------------------------------------- */ 
-var fs = require('fs'); // is used to create our client side files from the src directory
-
-
 
 
 io.sockets.on('connection', newConnection); // when there is a new connection, call function
