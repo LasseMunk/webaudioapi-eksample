@@ -95,7 +95,7 @@ udpPort.on("ready", function () {
 });
 
 udpPort.on("message", function (oscMessage) {
-    console.log(oscMessage);
+    // console.log(oscMessage); // See incoming OSC messages
     io.sockets.emit("message", oscMessage);
 });
 

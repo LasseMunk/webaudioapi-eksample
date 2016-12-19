@@ -2,6 +2,53 @@
 var context = new AudioContext(); // Create audio context
 								  // webkit prefix is no longer needed nor recommended
 
+/*  --------------- SLIDER VALUES --------------- */
+var fm_osc_modulator_freq = 100;
+var fm_osc_modulator_gain = 0;
+var fm_osc_carrier_freq = 100;
+var fm_osc_carrier_gain = 1;
+var fm_env_attack = 0.005;
+var fm_env_decay = 0.1;
+var fm_pan = 0;
+var fm_mstrGain = 1;
+
+/*  Use index.html sliders for control
+
+		document.getElementById("slider_modFreq").addEventListener('input', function () {		
+																	// 'input' create a continous input detection
+																	// alternative could be 'change'
+			fm_osc_modulator_freq = this.value * 8; 
+			
+		});
+
+		document.getElementById("slider_modGain").addEventListener('input', function () {		
+			fm_osc_modulator_gain = this.value*1000; 
+		});
+
+		document.getElementById("osc_carrier_freq").addEventListener('input', function () { 	
+			fm_osc_carrier_freq = (this.value*1000)+200; 
+		});
+
+		document.getElementById("mstrGain").addEventListener('input', function () { 	
+			fm_mstrGain = this.value; 
+		});
+
+		document.getElementById("panStereo").addEventListener('input', function () { 	
+			fm_pan = (this.value-0.5)*2; // pan range [-1., 1.]
+		});
+
+		document.getElementById("slider_ampAttack").addEventListener('input', function () { 	
+			fm_env_attack = this.value; 
+			fm_env_attack = parseFloat(fm_env_attack);
+		});
+
+		document.getElementById("slider_ampDecay").addEventListener('input', function () { 
+			fm_env_decay = this.value; 
+			fm_env_decay = parseFloat(fm_env_decay);
+		});
+
+		*/
+
 // Local scope
 var fmVoice = function () {
 
@@ -16,14 +63,8 @@ var fmVoice = function () {
 	sounds can be loaded inside a single AudioContext. 
 	*/
 
-
-	this.amp = {
-		attack: "0.005",
-		decay: "0.01",
-		attackPlusNow: "0"
-	};
-
 	var now = context.currentTime;
+	var attackPlusNow = 0;
 
 	// CREATE OSCILLATORS
 
@@ -77,58 +118,32 @@ var fmVoice = function () {
 	this.osc_carrier.start(context.currentTime); 	// generate sound instantly
 	this.osc_modulator.start(context.currentTime); 	// generate sound instantly  
 
+	this.updateSynthParams = function() {
 
-	
-	/*  --------------- SLIDER VALUES --------------- */
+		this.osc_modulator.frequency.value = fm_osc_modulator_freq;
+		this.osc_modulatorGain.gain.value =	fm_osc_modulator_gain;
+		this.osc_carrier.frequency.value = fm_osc_carrier_freq;
+		this.osc_carrierGain.gain.value = fm_osc_carrier_gain;
+		this.panStereo = fm_pan;
+		this.mstrGain.gain.value = fm_mstrGain;
 
-		document.getElementById("slider_modFreq").addEventListener('input', function () {		
-																	// 'input' create a continous input detection
-																	// alternative could be 'change'
-			this.osc_modulator.frequency.value = this.value * 8; 
-		});
-
-		document.getElementById("slider_modGain").addEventListener('input', function () {		
-			this.osc_modulatorGain.gain.value = this.value*1000; 
-		});
-
-		document.getElementById("osc_carrier_freq").addEventListener('input', function () { 	
-			this.osc_carrier.frequency.value = (this.value*1000)+200; 
-		});
-
-		document.getElementById("mstrGain").addEventListener('input', function () { 	
-			this.mstrGain.gain.value = this.value; 
-		});
-
-		document.getElementById("panStereo").addEventListener('input', function () { 	
-			this.panStereo.pan.value = (this.value-0.5)*2; // pan range [-1., 1.]
-		});
-
-		document.getElementById("slider_ampAttack").addEventListener('input', function () { 	
-			this.amp.attack = this.value; 
-			this.amp.attack = parseFloat(this.amp.attack);
-
-
-		});
-
-		document.getElementById("slider_ampDecay").addEventListener('input', function () { 
-			this.amp.decay = this.value; 
-			this.amp.decay = parseFloat(this.amp.decay);
-		});
-
+	};
 
 	this.ampEnv = function() {
 
+			this.updateSynthParams();
+
 			now = context.currentTime;
 			//amp.attackPlusNow = parseFloat(amp.attackPlusNow);
-			this.amp.attack = parseFloat(this.amp.attack);
-			this.amp.attackPlusNow = now + this.amp.attack;
+			fm_env_attack = parseFloat(fm_env_attack);
+			attackPlusNow = now + fm_env_attack;
 
 			this.osc_carrierGain.gain.cancelScheduledValues(0);
 			
 			// Amplitude envelope
 			this.osc_carrierGain.gain.setValueAtTime(0, now);
-			this.osc_carrierGain.gain.setTargetAtTime(1, now, this.amp.attack);
-			this.osc_carrierGain.gain.setTargetAtTime(0, this.amp.attackPlusNow, this.amp.decay); 
+			this.osc_carrierGain.gain.setTargetAtTime(1, now, fm_env_attack);
+			this.osc_carrierGain.gain.setTargetAtTime(0, attackPlusNow, fm_env_decay); 
 			// target value, start time, ramp time
 
 		}
@@ -138,7 +153,6 @@ var fmVoice = function () {
 
 var fmNumVoices = 8; // how many voices to instantiate
 var fmVoices = [];	 // array to fill with fm-voices
-
 
 for(i = 0; i < fmNumVoices; i++) { 	// instantiate fm voices 
 	fmVoices[i] = new fmVoice();
