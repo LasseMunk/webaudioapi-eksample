@@ -7,6 +7,19 @@ var app = express();						// express is a function call which create an
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 
+io.on('connection', function(client){
+      clientConnect(client); // call function when client is connecting
+
+  client.on('event', function(data){
+      // add event logic
+  });
+  
+  client.on('disconnect', function(){
+      clientDisconnect(client); // call function when client is disconnecting
+  });
+});
+
+
 http.listen(3000, function(){				// begins a server which listens on port 3000
   console.log('listening on *:3000');
 });
@@ -21,17 +34,15 @@ app.use(express.static('public')); 	// serve the static files found in the 'publ
 // when a connection is established to a client, a message is received / sent, disconnection.
 
 
+var clientIds = []; // array which takes care of connected IDs
+
 /* ---------------------------------------------
 
 	generate client side files from src folder
 
    -------------------------------------------- */ 
 
-
-io.sockets.on('connection', newConnection); // when there is a new connection, call function
-											// newConnection
-
-function newConnection(socket) {
+function clientConnect(socket) {
 
 	// there exist a socket, when a new connection is made. Therefore the argument
 	// is the socket.
@@ -45,14 +56,22 @@ function newConnection(socket) {
 
 	// console.log(socket); // if you .log the variable socket, you get a lot of metadata.
 
-	console.log("newConnection: " + socket.id); // show the new user id
+	//console.log("newConnection: " + socket.id); // show the new user id
+    
+    clientIds.push(socket.id);
+    console.log ("connected, clients array: " + clientIds);
+    sendClientLength(clientIds.length); // send the length of the new array to MAX
 }
 
-io.sockets.on('toServer', incMsg);
-	function incMsg(lol) {
-		console.log(lol);
-		console.log("hej");
-	}
+function clientDisconnect (socket) {
+    
+    var i = clientIds.indexOf(socket);
+    clientIds.splice(i, 1); // delete socket.id from clientIds array
+    
+    console.log ("disconnected, clients array: " + clientIds);
+    sendClientLength(clientIds.length); // send the length of the new array to MAX
+}
+
 
 /****************
  * OSC Over UDP *
@@ -76,13 +95,17 @@ var getIPAddresses = function () {
             }
         }
     }
-
     return ipAddresses;
 };
 
 var udpPort = new osc.UDPPort({
+    // socket server ip
     localAddress: "127.0.0.1",
-    localPort: 57121
+    localPort: 57121,
+
+    // MAX ip and port
+    remoteAddress: "127.0.0.1",
+    remotePort: 57120
 });
 
 udpPort.on("ready", function () {
@@ -95,8 +118,28 @@ udpPort.on("ready", function () {
 });
 
 udpPort.on("message", function (oscMessage) {
-    // console.log(oscMessage); // See incoming OSC messages
-    io.sockets.emit("message", oscMessage);
+    /*
+
+    args[0]:
+    0:      send to all
+    1 -> :  send to specific index
+
+    args[1]:
+        function:
+            - play
+            - synthParams
+
+    */
+    
+    if (oscMessage.args[0] == 0) {
+        io.sockets.emit("message", oscMessage);   // send to all
+    };
+
+    if  (oscMessage.args[0] > 0) {                // send to specific client
+        
+        var clientIndex = oscMessage.args[0] - 1; // since array index begins from 0
+        io.sockets.connected[clientIds[clientIndex]].emit('message', oscMessage);  
+    };
 });
 
 udpPort.on("error", function (err) {
@@ -104,6 +147,17 @@ udpPort.on("error", function (err) {
 });
 
 udpPort.open();
+
+function sendClientLength(length) {     // send to MAX
+
+    var msg = {
+        address: "/clientArrayLength",  // OSC namespace
+        args: [length]                  // OSC argument
+    };
+
+    udpPort.send(msg);                  // send OSC mesasge
+};
+
 
 /****************
  * OSC THE END  *

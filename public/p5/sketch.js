@@ -10,12 +10,13 @@ function setup() {
 
 function draw() {
 
-  //  updateStroke()
+  //updateStroke()
 
-    stroke(p5_strokeAmount);
-    fill(p5_strokeAmount);
-
-    ellipse(80, 80, 80, 80);
+  noStroke();
+  fill(p5_strokeAmount);
+  translate(100, 100); 
+  rotate(radians(45));
+  rect(0, 0, 50, 50);
 
 }
 
