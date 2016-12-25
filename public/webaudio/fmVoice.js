@@ -2,52 +2,51 @@
 var context = new AudioContext(); // Create audio context
 								  // webkit prefix is no longer needed nor recommended
 
-/*  --------------- SLIDER VALUES --------------- */
-var fm_osc_modulator_freq = 100;
-var fm_osc_modulator_gain = 0;
-var fm_osc_carrier_freq = 100;
-var fm_osc_carrier_gain = 1;
-var fm_env_attack = 0.005;
-var fm_env_decay = 0.1;
-var fm_pan = 0;
-var fm_mstrGain = 1;
+var lm_osc = {
+  0: "sine",
+  1: "square",
+  2: "sawtooth",
+  3: "triangle",
+  4: "custom"
+ }
 
-/*  Use index.html sliders for control
+var lm_filters = {
+  0: "lowpass",
+  1: "highpass",
+  2: "bandpass",
+  3: "lowshelf",
+  4: "highshelf",
+  5: "peaking",
+  6: "notch",
+  7: "allpass"
+ }
 
-		document.getElementById("slider_modFreq").addEventListener('input', function () {		
-																	// 'input' create a continous input detection
-																	// alternative could be 'change'
-			fm_osc_modulator_freq = this.value * 8; 
-			
-		});
+var lm_fmOscCar = {
+	type: lm_osc[0],
+	freq: 100,
+	gain: 1
+}
 
-		document.getElementById("slider_modGain").addEventListener('input', function () {		
-			fm_osc_modulator_gain = this.value*1000; 
-		});
+var lm_fmOscMod = {
+	type: lm_osc[0],
+	freq: 100,
+	gain: 1
+}
 
-		document.getElementById("osc_carrier_freq").addEventListener('input', function () { 	
-			fm_osc_carrier_freq = (this.value*1000)+200; 
-		});
+var lm_fmFiltMain = {
+	type: lm_filters[0],
+	freq: 400,
+	gain: 1,
+	Q: 1
+}
 
-		document.getElementById("mstrGain").addEventListener('input', function () { 	
-			fm_mstrGain = this.value; 
-		});
+var lm_fmAmpEnv = {
+	attack: 0.005,
+	decay: 0.1
+}
 
-		document.getElementById("panStereo").addEventListener('input', function () { 	
-			fm_pan = (this.value-0.5)*2; // pan range [-1., 1.]
-		});
-
-		document.getElementById("slider_ampAttack").addEventListener('input', function () { 	
-			fm_env_attack = this.value; 
-			fm_env_attack = parseFloat(fm_env_attack);
-		});
-
-		document.getElementById("slider_ampDecay").addEventListener('input', function () { 
-			fm_env_decay = this.value; 
-			fm_env_decay = parseFloat(fm_env_decay);
-		});
-
-		*/
+var lm_fmPan = 0;
+var lm_fmMstrGain = 0;
 
 // Local scope
 var fmVoice = function () {
@@ -55,12 +54,22 @@ var fmVoice = function () {
 	// http://middleearmedia.com/web-audio-api-basics/
 	// http://meeech.amihod.com/getting-started-with-javascript-debugging-in-chrome/
 
-
 	/*
 	In order to use the Web Audio API, we must first create a container. 
 	This container is called an AudioContext. It holds everything else inside it. Keep in mind 
 	that only one AudioContext is usually needed. Any number of 
 	sounds can be loaded inside a single AudioContext. 
+	*/
+
+
+ /* 
+	Oscillator types are:
+	- sine
+	- square
+	- sawtooth
+	- triangle
+	- custom:         https://developer.mozilla.org/en-US/docs/Web/API/OscillatorNode/setPeriodicWave
+	- creating noise: http://noisehack.com/generate-noise-web-audio-api/ 
 	*/
 
 	var now = context.currentTime;
@@ -71,36 +80,42 @@ var fmVoice = function () {
 	this.osc_carrier 	= context.createOscillator(); // create an oscillator
 	this.osc_modulator 	= context.createOscillator(); // create an oscillator
 
-	/* 
-	Oscillator types are:
-	- sine
-	- square
-	- sawtooth
-	- triangle
-	- custom:         https://developer.mozilla.org/en-US/docs/Web/API/OscillatorNode/setPeriodicWave
-	- creating noise: http://noisehack.com/generate-noise-web-audio-api/ 
-	*/
-
-	this.osc_carrier.type 	= 'sine';
-	this.osc_modulator.type  = 'sine';
+	this.osc_carrier.type 	= lm_fmOscCar.type;
+	this.osc_modulator.type  = lm_fmOscMod.type;
 
 
-	this.osc_carrier.frequency.value   	= 400.; 				// initial frequency
-	this.osc_modulator.frequency.value 	= 4.; 			
-			
+	this.osc_carrier.frequency.value   	= lm_fmOscCar.freq; 				// initial frequency
+	this.osc_modulator.frequency.value 	= lm_fmOscMod.freq; 			
+	
+	// CREATE FLITER
+	this.mainFilter = context.createBiquadFilter();
+
+	// CREATE LIMITER
+	// https://dvcs.w3.org/hg/audio/raw-file/tip/webaudio/specification.html#DynamicsCompressorNode
+
+	 this.limiter = context.createDynamicsCompressor();
+	 this.limiter.threshold = 0; 	 // in dB
+	 this.limiter.knee 		= 0;	
+	 this.limiter.ratio 	= 5;
+	 this.limiter.attack 	= 0.035; // in seconds
+	 this.limiter.release 	= 0.080;  // in seconds
+
+	// CREATE GAIN
 
 	this.osc_carrierGain 	= context.createGain(); // create amplitude control
 	this.osc_modulatorGain 	= context.createGain(); // create amplitude control
 
+	this.mainFilterGain 	= context.createGain();
+
 	this.mstrGain		 	= context.createGain(); // create amplitude control
+	this.panStereo 			= context.createStereoPanner();
 
+	this.osc_carrierGain.gain.value 	= lm_fmOscCar.gain; 				// initial amplitude
+	this.osc_modulatorGain.gain.value 	= lm_fmOscMod.gain;
 
-	this.osc_carrierGain.gain.value 	= 0.; 				// initial amplitude
-	this.osc_modulatorGain.gain.value 	= 100.;
+	this.mstrGain.gain.value 			= lm_fmMstrGain;
 
-	this.mstrGain.gain.value = 0.5;
-
-	this.panStereo = context.createStereoPanner();
+	
 
 	/*  --------------- CONNECT AUDIO ROUTING --------------- */
 
@@ -109,7 +124,12 @@ var fmVoice = function () {
 
 
 	this.osc_carrier.connect(this.osc_carrierGain); // connect osc to amplitude control
-	this.osc_carrierGain.connect(this.mstrGain);
+	this.osc_carrierGain.connect(this.mainFilter);
+
+	
+
+	this.mainFilter.connect(this.mstrGain);
+	this.limiter.connect(this.mstrGain);
 
 	this.mstrGain.connect(this.panStereo); // connect the context to DAC
 	this.panStereo.connect(context.destination)
@@ -120,13 +140,20 @@ var fmVoice = function () {
 
 	this.updateSynthParams = function() {
 
-		this.osc_modulator.frequency.value = fm_osc_modulator_freq;
-		this.osc_modulatorGain.gain.value =	fm_osc_modulator_gain;
-		this.osc_carrier.frequency.value = fm_osc_carrier_freq;
-		this.osc_carrierGain.gain.value = fm_osc_carrier_gain;
-		this.panStereo = fm_pan;
-		this.mstrGain.gain.value = fm_mstrGain;
-
+		this.osc_modulator.frequency.value 	= lm_fmOscMod.freq;
+		this.osc_modulatorGain.gain.value 	= lm_fmOscMod.gain;
+		this.osc_modulator.type  			= lm_fmOscMod.type;
+		this.osc_carrier.frequency.value 	= lm_fmOscCar.freq;
+		this.osc_carrierGain.gain.value 	= lm_fmOscCar.gain;
+		this.osc_carrier.type 				= lm_fmOscCar.type;
+		
+		this.mainFilter.type 				= lm_fmFiltMain.type;
+		this.mainFilter.frequency.value 	= lm_fmFiltMain.freq;
+		this.mainFilter.Q.value 			= lm_fmFiltMain.Q;
+		this.mainFilter.gain.value 			= lm_fmFiltMain.gain;
+		
+		this.panStereo.pan.value 			= lm_fmPan;
+		this.mstrGain.gain.value 			= lm_fmMstrGain;
 	};
 
 	this.ampEnv = function() {
@@ -135,17 +162,17 @@ var fmVoice = function () {
 
 			now = context.currentTime;
 			//amp.attackPlusNow = parseFloat(amp.attackPlusNow);
-			fm_env_attack = parseFloat(fm_env_attack);
-			attackPlusNow = now + fm_env_attack;
+			lm_fmAmpEnv.attack = parseFloat(lm_fmAmpEnv.attack);
+			attackPlusNow = now + lm_fmAmpEnv.attack;
 
 			this.osc_carrierGain.gain.cancelScheduledValues(0);
 			
 			// Amplitude envelope
 			this.osc_carrierGain.gain.setValueAtTime(0, now);
-			this.osc_carrierGain.gain.setTargetAtTime(1, now, fm_env_attack);
-			this.osc_carrierGain.gain.setTargetAtTime(0, attackPlusNow, fm_env_decay); 
+			this.osc_carrierGain.gain.setTargetAtTime(1, now, lm_fmAmpEnv.attack);
+			this.osc_carrierGain.gain.setTargetAtTime(0, attackPlusNow, lm_fmAmpEnv.decay); 
 			// target value, start time, ramp time
-
+			console.log(this.limiter.reduction);
 		}
 };
 
@@ -157,3 +184,29 @@ var fmVoices = [];	 // array to fill with fm-voices
 for(i = 0; i < fmNumVoices; i++) { 	// instantiate fm voices 
 	fmVoices[i] = new fmVoice();
 	};
+
+function osc_mapFmParameters (arg) {
+
+// see arg[X] at each variable, to figure out how to control it via OSC
+
+	lm_fmOscMod.freq 	= arg[2] * 40;
+	lm_fmOscMod.gain 	= arg[3] * 1000;
+	
+	// scale 0. 1. -> 0 3, round to convert FLOAT -> INT and lookup in lm_osc object
+	lm_fmOscMod.type 	= lm_osc[Math.round(lmUtil_scale(arg[ 4 ], [0., 1.], [0, 3]))];
+
+	lm_fmOscCar.freq 	= (arg[5] * 1000) + 200;
+	lm_fmOscCar.gain 	= arg[6];
+	lm_fmOscCar.type	= lm_osc[Math.round(lmUtil_scale(arg[ 7 ], [0., 1.], [0, 3]))];
+
+	lm_fmFiltMain.freq	= Math.pow((arg[8]*10), 4.3)+40; // exponential range 40 Hz -> ~20kHz
+	lm_fmFiltMain.gain  = 1; // -100 -> 100 
+	lm_fmFiltMain.type	= lm_filters[Math.round(lmUtil_scale(arg[ 10 ], [0., 1.], [0, 7]))];
+	lm_fmFiltMain.Q		= arg[11] + 0.5; // move into range 0.5 -> 1.5
+
+	lm_fmAmpEnv.attack 	= (Math.pow((arg[12]*15), 2.4)*0.001)+0.005; // in seconds	
+	lm_fmAmpEnv.decay	= (Math.pow((arg[13]*15), 2.8)*0.001)+0.005; // in seconds
+	
+	lm_fmPan 			= (arg[14] - 0.5) * 2; // map to -1. to 1.
+	lm_fmMstrGain 		= arg[15];
+}
