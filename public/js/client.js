@@ -16,10 +16,13 @@ function oscMessage(data) {
 
     */
 	if (data.args[1] == 'play'){			 
-		trigVoice.play();	
+		fmPlay();
 	}
 	
 	if (data.args[1] == 'synthParams'){		 
 		osc_mapFmParameters(data.args); // function is found in fmVoice.js
+  	}
+    if (data.args[1] == 'outputParams'){		 
+		osc_mapOutputParameters(data.args); // function is found in fmVoice.js
   	}	
 }
