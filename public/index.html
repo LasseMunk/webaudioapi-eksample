@@ -10,14 +10,14 @@
 		<link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
 		<title>David og Lasses fede synthshow!</title>		
 		  <!-- this line removes any default padding and style. you might only need one of these values set. -->
-  		<style> body {padding: 0; margin: 0;} </style>
+  		<style> body {padding: 0; margin: 0;} </style>		
 	</head>
 	<body>
 
 						<!-- CREATE UI BEFORE REFERENCING IN THE .JS -->
 
 			<!-- <input id="slider_volume" type="range" min="0" max="1" step="0.1" value="0.5"/><br> -->
-			<input id="slider_modFreq" type="range" min="0.001" max="100" step="0.0001" value="0.1"/>mod freq<br>
+			<!-- <input id="slider_modFreq" type="range" min="0.001" max="100" step="0.0001" value="0.1"/>mod freq<br>
 			<input id="slider_modGain" type="range" min="0.005" max="1" step="0.0001" value="0.1"/>mod gain<br>
 			<input id="osc_carrier_freq" type="range" min="0" max="1" step="0.0001" value="0.1"/>car freq<br>
 			<input id="slider_ampAttack" type="range" min="0.005" max="1" step="0.0001" value="0.005"/>attack<br>
@@ -27,21 +27,18 @@
 			<input id="mstrGain" type="range" min="0" max="1" step="0.001" value="0.5"/>volume<br>
 			<input id="panStereo" type="range" min="0.001" max="0.999" step="0.001" value="0.5"/>pan<br>
 
-			<button id="play" onclick="ampEnv()">play</button>
+			<button id="play" onclick="trigVoice.play()">play</button><br>
 
-			
-			<script src="/webaudio/fmbasic.js"></script>
+			!-->
 
-			<script language="javascript" type="text/javascript" src="/libraries/p5.js"></script>
-			<script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
-			<script language="javascript" type="text/javascript" src="/p5/ui.js"></script>
-
-			
-
-			
-			
-
-
+			<script type="text/javascript" src="/js/socket.io-1.4.5.js"></script> 
+			<script type="text/javascript" src="/js/p5.min.js"></script> 
+			<script type="text/javascript" src="/js/_lm_utilities.js"></script> 
+			<script type="text/javascript" src="/p5/sketch.js"></script> 
+			<script type="text/javascript" src="/webaudio/fmSetup.js"></script>
+			<script type="text/javascript" src="/webaudio/fmVoice.js"></script>
+			<script type="text/javascript" src="/webaudio/fmSeq.js"></script>
+			<script type="text/javascript" src="/js/client.js"></script>
 
 	</body>
 </html>
