@@ -9,7 +9,7 @@
 			"modernui" : 1
 		}
 ,
-		"rect" : [ 331.0, 79.0, 954.0, 901.0 ],
+		"rect" : [ 331.0, 79.0, 954.0, 766.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 12.0,
@@ -37,6 +37,105 @@
 		"style" : "",
 		"subpatcher_template" : "",
 		"boxes" : [ 			{
+				"box" : 				{
+					"id" : "obj-98",
+					"linecount" : 6,
+					"maxclass" : "comment",
+					"numinlets" : 1,
+					"numoutlets" : 0,
+					"patching_rect" : [ 820.0, 521.0, 18.0, 87.0 ],
+					"style" : "",
+					"text" : "HP LP\n Q\n",
+					"textcolor" : [ 0.862745, 0.870588, 0.878431, 1.0 ],
+					"textjustification" : 1
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"id" : "obj-97",
+					"linecount" : 7,
+					"maxclass" : "comment",
+					"numinlets" : 1,
+					"numoutlets" : 0,
+					"patching_rect" : [ 790.5, 521.0, 18.0, 100.0 ],
+					"style" : "",
+					"text" : "LP\n\nFREQ",
+					"textcolor" : [ 0.862745, 0.870588, 0.878431, 1.0 ],
+					"textjustification" : 1
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"id" : "obj-96",
+					"linecount" : 7,
+					"maxclass" : "comment",
+					"numinlets" : 1,
+					"numoutlets" : 0,
+					"patching_rect" : [ 762.0, 521.0, 23.0, 100.0 ],
+					"style" : "",
+					"text" : "HP\n\nFREQ",
+					"textcolor" : [ 0.862745, 0.870588, 0.878431, 1.0 ],
+					"textjustification" : 1
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"id" : "obj-94",
+					"maxclass" : "newobj",
+					"numinlets" : 5,
+					"numoutlets" : 2,
+					"outlettype" : [ "signal", "signal" ],
+					"patching_rect" : [ 858.0, 366.0, 83.0, 22.0 ],
+					"style" : "",
+					"text" : "lm.hplpstereo",
+					"varname" : "lm.hplpstereo"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"id" : "obj-93",
+					"maxclass" : "message",
+					"numinlets" : 2,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 323.0, 894.0, 50.0, 22.0 ],
+					"style" : "",
+					"text" : "13"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"id" : "obj-91",
+					"maxclass" : "newobj",
+					"numinlets" : 2,
+					"numoutlets" : 2,
+					"outlettype" : [ "", "" ],
+					"patching_rect" : [ 414.0, 867.0, 39.0, 22.0 ],
+					"style" : "",
+					"text" : "zl.len"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"id" : "obj-90",
+					"linecount" : 2,
+					"maxclass" : "message",
+					"numinlets" : 2,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 397.0, 922.0, 487.0, 35.0 ],
+					"style" : "",
+					"text" : "0 synthParams 0.669291 0.181102 0.503937 0.818167 0.055118 0.818898 0. 0.299213 0.007874 0.314961 0.464567"
+				}
+
+			}
+, 			{
 				"box" : 				{
 					"color" : [ 0.941176, 0.690196, 0.196078, 1.0 ],
 					"id" : "obj-88",
@@ -252,10 +351,10 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 721.0, 521.0, 20.0, 127.0 ],
+					"patching_rect" : [ 711.5, 527.5, 20.0, 127.0 ],
 					"style" : "",
 					"text" : "DLY\n\n WIDTH",
-					"textcolor" : [ 0.862745, 0.870588, 0.878431, 1.0 ],
+					"textcolor" : [ 0.65098, 0.666667, 0.662745, 0.49 ],
 					"textjustification" : 1
 				}
 
@@ -267,10 +366,10 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 691.5, 521.0, 20.0, 114.0 ],
+					"patching_rect" : [ 681.5, 527.5, 20.0, 114.0 ],
 					"style" : "",
 					"text" : "DLY\n\n FREQ",
-					"textcolor" : [ 0.862745, 0.870588, 0.878431, 1.0 ],
+					"textcolor" : [ 0.65098, 0.666667, 0.662745, 0.49 ],
 					"textjustification" : 1
 				}
 
@@ -282,7 +381,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 664.0, 521.0, 20.0, 127.0 ],
+					"patching_rect" : [ 658.25, 521.0, 20.0, 127.0 ],
 					"style" : "",
 					"text" : "DLY\n\n FDBCK",
 					"textcolor" : [ 0.862745, 0.870588, 0.878431, 1.0 ],
@@ -297,7 +396,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 633.0, 521.0, 20.0, 100.0 ],
+					"patching_rect" : [ 630.5, 521.0, 20.0, 100.0 ],
 					"style" : "",
 					"text" : "DLY\n TIME",
 					"textcolor" : [ 0.862745, 0.870588, 0.878431, 1.0 ],
@@ -379,7 +478,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 802.0, 521.0, 20.0, 114.0 ],
+					"patching_rect" : [ 842.0, 521.0, 20.0, 114.0 ],
 					"style" : "",
 					"text" : "MSTR\n\nVOL",
 					"textcolor" : [ 0.862745, 0.870588, 0.878431, 1.0 ],
@@ -390,13 +489,13 @@
 , 			{
 				"box" : 				{
 					"id" : "obj-35",
-					"linecount" : 8,
+					"linecount" : 9,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 773.0, 521.0, 20.0, 114.0 ],
+					"patching_rect" : [ 664.0, 358.0, 20.0, 127.0 ],
 					"style" : "",
-					"text" : "MSTR\n\nPAN",
+					"text" : "VOI\nCE\n\nPAN",
 					"textcolor" : [ 0.862745, 0.870588, 0.878431, 1.0 ],
 					"textjustification" : 1
 				}
@@ -1885,7 +1984,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 745.0, 521.0, 23.0, 127.0 ],
+					"patching_rect" : [ 737.0, 521.0, 23.0, 127.0 ],
 					"style" : "",
 					"text" : "WAVESHAPE",
 					"textcolor" : [ 0.862745, 0.870588, 0.878431, 1.0 ],
@@ -2062,7 +2161,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "bang" ],
-					"patching_rect" : [ 226.0, 380.727295, 24.0, 24.0 ],
+					"patching_rect" : [ 226.0, 373.727295, 24.0, 24.0 ],
 					"style" : ""
 				}
 
@@ -2386,10 +2485,10 @@
 					"numoutlets" : 2,
 					"outlettype" : [ "", "" ],
 					"parameter_enable" : 0,
-					"patching_rect" : [ 435.5, 358.0, 224.5, 127.0 ],
+					"patching_rect" : [ 435.5, 358.0, 248.5, 127.0 ],
 					"setminmax" : [ 0.0, 1.0 ],
 					"setstyle" : 1,
-					"size" : 10,
+					"size" : 11,
 					"slidercolor" : [ 0.952941, 0.564706, 0.098039, 1.0 ],
 					"spacing" : 2,
 					"style" : ""
@@ -2430,10 +2529,10 @@
 					"numoutlets" : 2,
 					"outlettype" : [ "", "" ],
 					"parameter_enable" : 0,
-					"patching_rect" : [ 602.5, 521.0, 222.5, 152.272705 ],
+					"patching_rect" : [ 602.5, 521.0, 264.5, 152.272705 ],
 					"setminmax" : [ 0.0, 1.0 ],
 					"setstyle" : 1,
-					"size" : 8,
+					"size" : 10,
 					"slidercolor" : [ 0.701961, 0.415686, 0.886275, 1.0 ],
 					"spacing" : 2,
 					"style" : ""
@@ -2679,6 +2778,24 @@
 			}
 , 			{
 				"patchline" : 				{
+					"destination" : [ "obj-90", 1 ],
+					"disabled" : 0,
+					"hidden" : 0,
+					"source" : [ "obj-43", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-91", 0 ],
+					"disabled" : 0,
+					"hidden" : 0,
+					"source" : [ "obj-43", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
 					"destination" : [ "obj-42", 0 ],
 					"disabled" : 0,
 					"hidden" : 0,
@@ -2851,7 +2968,7 @@
 , 			{
 				"patchline" : 				{
 					"destination" : [ "obj-8", 0 ],
-					"disabled" : 1,
+					"disabled" : 0,
 					"hidden" : 0,
 					"source" : [ "obj-75", 1 ]
 				}
@@ -2886,6 +3003,15 @@
 			}
 , 			{
 				"patchline" : 				{
+					"destination" : [ "obj-93", 1 ],
+					"disabled" : 0,
+					"hidden" : 0,
+					"source" : [ "obj-91", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
 					"destination" : [ "obj-99", 1 ],
 					"disabled" : 0,
 					"hidden" : 0,
@@ -2895,6 +3021,7 @@
 			}
  ],
 		"parameters" : 		{
+			"obj-94::obj-161" : [ "multislider[18]", "multislider[1]", 0 ],
 			"obj-7::obj-102::obj-24::obj-70" : [ "PitchMap[1]", "PitchMap", 1 ],
 			"obj-7::obj-67" : [ "AmpDecay[2]", "D", 0 ],
 			"obj-7::obj-121" : [ "multislider[1]", "multislider[1]", 0 ],
@@ -2969,6 +3096,24 @@
 , 			{
 				"name" : "klo.quant.simple.maxpat",
 				"bootpath" : "~/Google.Drive/KLO/Max-Patches/abstractions",
+				"type" : "JSON",
+				"implicit" : 1
+			}
+, 			{
+				"name" : "lm.hplpstereo.maxpat",
+				"bootpath" : "~/Google.Drive/KLO/Max-Patches/abstractions",
+				"type" : "JSON",
+				"implicit" : 1
+			}
+, 			{
+				"name" : "pan2.maxpat",
+				"bootpath" : "~/Google.Drive/KLO/Max-Patches/abstractions/Music_SDP Beta 1.0.3/System_Files/Important_Files/Effects/Includes",
+				"type" : "JSON",
+				"implicit" : 1
+			}
+, 			{
+				"name" : "thru.maxpat",
+				"bootpath" : "C74:/patchers/m4l/Pluggo for Live resources/patches",
 				"type" : "JSON",
 				"implicit" : 1
 			}

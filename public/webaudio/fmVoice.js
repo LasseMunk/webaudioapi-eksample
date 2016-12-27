@@ -45,7 +45,7 @@ var lm_fmAmpEnv = {
 	decay: 0.1
 }
 
-
+var lm_panStereo = 0;
 /* --------------------------------------------------------------------------- */
 /* ---------------------------   SYNTH VOICE   ------------------------------- */
 /* --------------------------------------------------------------------------- */
@@ -93,6 +93,10 @@ var fmVoice = function () {
 
 	// CREATE FLITER
 	this.mainFilter 				= context.createBiquadFilter();
+
+	// CREATE PAN
+	this.panStereo 						= context.createStereoPanner();
+	this.panStereo.pan.value 			= 0;
 	
 	/*  --------------- CONNECT AUDIO ROUTING --------------- */
 
@@ -104,8 +108,10 @@ var fmVoice = function () {
 	
 	this.osc_carrierGain.gain.value = 0; // no sound before ampEnv is triggered
 
-	this.mainFilter.connect(fmOut.waveshaper);
-	this.mainFilter.connect(fmOut.toDelay);
+	this.mainFilter.connect(this.panStereo);
+
+	this.panStereo.connect(fmOut.waveshaper); // connect the context to DAC
+	this.panStereo.connect(fmOut.toDelay); // connect the context to DAC
 
 	/*  --------------- START OSCILLATORS --------------- */
 
@@ -127,6 +133,8 @@ var fmVoice = function () {
 		this.mainFilter.frequency.value 	= lm_fmFiltMain.freq;
 		this.mainFilter.Q.value 			= lm_fmFiltMain.Q;
 		this.mainFilter.gain.value 			= lm_fmFiltMain.gain;	
+
+		this.panStereo.pan.value 			= lm_panStereo;
 	};
 
 	this.ampEnv = function() {
@@ -173,6 +181,16 @@ function synthOutput() { // output module
 		curveAmt: 20
 	}
 
+	this.hpLpConfig = {
+		hpType: 'highpass',
+		hpFreq: 40,
+		hpQ: 0.7,
+		lpType: 'lowpass',
+		lpFreq: 15000,
+		lpQ: 0.7,
+		width: 14960	// hp - lp
+	}
+
 	// CREATE LIMITER
 	// https://dvcs.w3.org/hg/audio/raw-file/tip/webaudio/specification.html#DynamicsCompressorNode
 
@@ -198,28 +216,37 @@ function synthOutput() { // output module
 	this.waveshaper.oversample = this.waveshaperConfig.oversample;
 	this.waveshaper.curve = lm_wsCurve(this.waveshaperConfig.curveAmt);
 
-	// CREATE MASTER GAIN + PAN
+	// CREATE HP+LP FILTER
+	this.hpFilter 					= context.createBiquadFilter();
+	this.hpFilter.type 				= this.hpLpConfig.hpType;
+	this.hpFilter.frequency.value 	= this.hpLpConfig.hpFreq;
+	this.hpFilter.Q.value 			= this.hpLpConfig.hpQ;
 
+	this.lpFilter 					= context.createBiquadFilter();
+	this.lpFilter.type 				= this.hpLpConfig.lpType;
+	this.lpFilter.frequency.value 	= this.hpLpConfig.lpFreq;
+	this.lpFilter.Q.value 			= this.hpLpConfig.lpQ;
+
+	// CREATE MASTER GAIN + PAN
 	this.mstrGain		 				= context.createGain(); // create amplitude control
 	this.mstrGain.gain.value 			= 1;
-	this.panStereo 						= context.createStereoPanner();
-	this.panStereo.pan.value 			= 0;
+
 
 	/*  --------------- CONNECT AUDIO ROUTING --------------- */
 		// fmVoice is connected waveshaper & toDelay.
 
 		// AUX send delay
 		this.toDelay.connect(this.delay);
-		this.delay.connect(this.delayFeedback);
 		this.delay.connect(this.waveshaper);
-		this.delayFeedback.connect(this.delay);
-
-		this.waveshaper.connect(this.mstrGain);
-
+		this.waveshaper.connect(this.hpFilter);
+		this.hpFilter.connect(this.lpFilter);
+		this.lpFilter.connect(this.mstrGain);
+		this.lpFilter.connect(this.delayFeedback);
+			this.delayFeedback.connect(this.delay);
 		// this.limiter.connect(this.mstrGain);
 
-		this.mstrGain.connect(this.panStereo); 
-		this.panStereo.connect(context.destination); // connect the context to DAC
+		this.mstrGain.connect(context.destination); 
+	
 
 	/*  --------------- AUDIO ROUTING END --------------- */
 
@@ -231,6 +258,11 @@ function synthOutput() { // output module
 			this.delayFeedback.gain.value		= this.delayConfig.feedback;
 
 			this.waveshaper.curve				= lm_wsCurve(this.waveshaperConfig.curveAmt);
+
+			this.hpFilter.frequency.value		= this.hpLpConfig.hpFreq;
+			this.hpFilter.Q.value				= this.hpLpConfig.hpQ;
+			this.lpFilter.frequency.value		= this.hpLpConfig.lpFreq;
+			this.lpFilter.Q.value				= this.hpLpConfig.lpQ;
 	}
 };
 
@@ -261,9 +293,12 @@ function osc_mapFmParameters (arg) {
 
 	lm_fmAmpEnv.attack 	= (Math.pow((arg[10]*15), 2.4)*0.001)+0.005; // in seconds	
 	lm_fmAmpEnv.decay	= (Math.pow((arg[11]*15), 2.8)*0.001)+0.005; // in seconds
+
+	lm_panStereo	 	= (arg[12] - 0.5) * 2; // map to -1. to 1.
 }
 
 function osc_mapOutputParameters (arg) {
+	
 	fmOut.delayConfig.toDelay  	= arg[2];
 
 						 		 	  	  // scale 0. 1. -> 0 16, lookup noteval, convert noteval to ms in relation 
@@ -276,9 +311,13 @@ function osc_mapOutputParameters (arg) {
 	fmOut.delayConfig.width		= arg[6] * 1;	 // note in use
 
 	fmOut.waveshaperConfig.curveAmt = Math.pow((arg[ 7 ]*5), 2.8);
-	
-	fmOut.panStereo.pan.value 	= (arg[8] - 0.5) * 2; // map to -1. to 1.
-	fmOut.mstrGain.gain.value 	= arg[9];
+
+	fmOut.hpLpConfig.hpFreq	= (Math.pow((arg[ 8 ]), 4)*19980)+20; // between 20 Hz and 20 kHz
+	fmOut.hpLpConfig.lpFreq	= (Math.pow((arg[ 9 ]), 4)*19980)+20;
+	fmOut.hpLpConfig.hpQ	= lmUtil_scale(arg[ 10 ], [0., 1.], [0.1, 0.98]);	
+	fmOut.hpLpConfig.lpQ	= lmUtil_scale(arg[ 10 ], [0., 1.], [0.1, 0.98]);
+
+	fmOut.mstrGain.gain.value 	= arg[11];
 
 	fmOut.updateOutputParameters();
 }
