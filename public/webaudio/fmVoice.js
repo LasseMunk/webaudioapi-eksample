@@ -1,6 +1,85 @@
 // Global scope
-var context = new AudioContext(); // Create audio context
-								  // webkit prefix is no longer needed nor recommended
+var context;
+var fmOut;
+
+var touchEventlisten;
+var lm_initiate = new testClientSystem();
+
+
+function testClientSystem (){
+	var isiOS = 0;				//	<<<< change to test iOS
+
+    // test if iOS, if it is, then wait until 'touchend', it it isn't then just initiate audio
+
+    if(isiOS == 0) {
+       initiateAudio(); 
+       
+    };
+    if (isiOS == 1) {   
+        touchEventlisten = new touchEventlistener();
+    };
+};
+
+function touchEventlistener() {
+    var hasBeenTouched = 0; // don't change
+	
+    document.body.addEventListener('touchend', function(e){
+        // http://www.javascriptkit.com/javatutors/touchevents.shtml
+		
+        // initiate audio if it's the first touch
+        if(hasBeenTouched == 0) {
+        
+			
+            initiateAudio();        // important for making it work on iOS   
+        	
+			hasBeenTouched = 1;     // only call touch event 1
+            
+       };
+    }, false);
+}
+
+function deleteTouchEventListener() {   // delete the touchend listener after use, to avoid clicks in audio
+    touchEventlisten = 'event listener deleted';
+}
+
+function initiateAudio() {
+	
+    globalTempo = 120; // BPM
+	
+	window.AudioContext = window.AudioContext || window.webkitAudioContext;
+	context = new window.AudioContext();  // Create audio context
+										  // webkit prefix is no longer needed nor recommended
+					  
+    // create empty buffer and play sample inside touchend event to enable iOS audio
+    fmOut = new synthOutput();
+
+/*
+    	// create empty buffer
+	var buffer = context.createBuffer(1, 1, 22050);
+	var source = context.createBufferSource();
+	source.buffer = buffer;
+
+	// connect to output (your speakers)
+	source.connect(context.destination);
+
+	// play the file
+	source.start(context.currentTime);
+  */
+
+   var oscillator = context.createOscillator();
+ oscillator.frequency.value = 400;
+ oscillator.connect(context.destination);
+ oscillator.start(0);
+ oscillator.stop(.5);   
+};
+
+
+
+/* --------------------------------------------------------------------------- */
+/* ---------------------------   SYNTH VOICE   ------------------------------- */
+/* --------------------------------------------------------------------------- */
+
+
 
 var lm_osc = {
   0: "sine",
@@ -46,10 +125,6 @@ var lm_fmAmpEnv = {
 }
 
 var lm_panStereo = 0;
-/* --------------------------------------------------------------------------- */
-/* ---------------------------   SYNTH VOICE   ------------------------------- */
-/* --------------------------------------------------------------------------- */
-
 
 var fmVoice = function () {
 
@@ -74,7 +149,7 @@ var fmVoice = function () {
 	- creating noise: http://noisehack.com/generate-noise-web-audio-api/ 
 	*/
 
-	var now = context.currentTime;
+	var now = 0;
 	var attackPlusNow = 0;
 
 	// CREATE OSCILLATORS
@@ -92,7 +167,7 @@ var fmVoice = function () {
 	this.osc_modulatorGain.gain.value 	= lm_fmOscMod.gain;
 
 	// CREATE FLITER
-	this.mainFilter 				= context.createBiquadFilter();
+	this.mainFilter 					= context.createBiquadFilter();
 
 	// CREATE PAN
 	this.panStereo 						= context.createStereoPanner();
@@ -139,8 +214,11 @@ var fmVoice = function () {
 
 	this.ampEnv = function() {
 
-			this.updateSynthParams();
+			p5_isPlaying = 1; // stupid test with p5
 
+
+			this.updateSynthParams();
+	
 			now = context.currentTime;
 			//amp.attackPlusNow = parseFloat(amp.attackPlusNow);
 			lm_fmAmpEnv.attack = parseFloat(lm_fmAmpEnv.attack);
@@ -171,7 +249,7 @@ function synthOutput() { // output module
 	this.delayConfig = {
 		toDelay: 0,
 		time: 0.25,
-		feedback: 0.8,
+		feedback: 0.1,
 		freq: 500,
 		width: 1
 	}
@@ -266,14 +344,13 @@ function synthOutput() { // output module
 	}
 };
 
-var fmOut = new synthOutput();
-
 function fmPlay(){	// play a synth voice
 	var newVoice = new fmVoice();
-	newVoice.ampEnv();
+		newVoice.ampEnv();
 };
 
 function osc_mapFmParameters (arg) {
+
 
 // see arg[X] at each variable, to figure out how to control it via OSC
 

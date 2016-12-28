@@ -9,7 +9,7 @@
 			"modernui" : 1
 		}
 ,
-		"rect" : [ 331.0, 79.0, 954.0, 766.0 ],
+		"rect" : [ 533.0, 161.0, 954.0, 766.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 12.0,
@@ -39,11 +39,11 @@
 		"boxes" : [ 			{
 				"box" : 				{
 					"id" : "obj-98",
-					"linecount" : 6,
+					"linecount" : 5,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 820.0, 521.0, 18.0, 87.0 ],
+					"patching_rect" : [ 820.0, 521.0, 21.0, 74.0 ],
 					"style" : "",
 					"text" : "HP LP\n Q\n",
 					"textcolor" : [ 0.862745, 0.870588, 0.878431, 1.0 ],
@@ -58,7 +58,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 790.5, 521.0, 18.0, 100.0 ],
+					"patching_rect" : [ 790.5, 521.0, 20.0, 100.0 ],
 					"style" : "",
 					"text" : "LP\n\nFREQ",
 					"textcolor" : [ 0.862745, 0.870588, 0.878431, 1.0 ],
@@ -131,7 +131,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 397.0, 922.0, 487.0, 35.0 ],
 					"style" : "",
-					"text" : "0 synthParams 0.669291 0.181102 0.503937 0.818167 0.055118 0.818898 0. 0.299213 0.007874 0.314961 0.464567"
+					"text" : "0 play 0.535433 0.448819 0.527559 0.80315 0.574803 0.566929 0. 0.165354 0. 0.818898 0.598425"
 				}
 
 			}
@@ -2222,7 +2222,7 @@
 				"box" : 				{
 					"id" : "obj-48",
 					"maxclass" : "number",
-					"maximum" : 1,
+					"maximum" : 2,
 					"minimum" : 0,
 					"numinlets" : 1,
 					"numoutlets" : 2,
@@ -2452,7 +2452,7 @@
 					"patching_rect" : [ 702.0, 298.0, 58.0, 22.0 ],
 					"style" : "",
 					"text" : "autopattr",
-					"varname" : "u279000617"
+					"varname" : "u807000698"
 				}
 
 			}
@@ -2472,7 +2472,7 @@
 ,
 					"style" : "",
 					"text" : "pattrstorage",
-					"varname" : "u616000614"
+					"varname" : "u600000693"
 				}
 
 			}
@@ -3021,16 +3021,16 @@
 			}
  ],
 		"parameters" : 		{
-			"obj-94::obj-161" : [ "multislider[18]", "multislider[1]", 0 ],
-			"obj-7::obj-102::obj-24::obj-70" : [ "PitchMap[1]", "PitchMap", 1 ],
-			"obj-7::obj-67" : [ "AmpDecay[2]", "D", 0 ],
-			"obj-7::obj-121" : [ "multislider[1]", "multislider[1]", 0 ],
-			"obj-7::obj-46" : [ "multislider", "multislider", 0 ],
-			"obj-7::obj-148" : [ "decay[2]", "decay", 0 ],
 			"obj-7::obj-42" : [ "live.dial[10]", "Rotate", 0 ],
 			"obj-7::obj-16" : [ "Dry/Wet[1]", "Dry/Wet", 0 ],
 			"obj-7::obj-152" : [ "multislider[2]", "multislider[1]", 0 ],
-			"obj-7::obj-116" : [ "decay[3]", "decay", 0 ]
+			"obj-7::obj-116" : [ "decay[3]", "decay", 0 ],
+			"obj-7::obj-121" : [ "multislider[1]", "multislider[1]", 0 ],
+			"obj-7::obj-102::obj-24::obj-70" : [ "PitchMap[1]", "PitchMap", 1 ],
+			"obj-7::obj-148" : [ "decay[2]", "decay", 0 ],
+			"obj-94::obj-161" : [ "multislider[18]", "multislider[1]", 0 ],
+			"obj-7::obj-67" : [ "AmpDecay[2]", "D", 0 ],
+			"obj-7::obj-46" : [ "multislider", "multislider", 0 ]
 		}
 ,
 		"dependency_cache" : [ 			{

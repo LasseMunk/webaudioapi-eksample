@@ -4,19 +4,21 @@
 https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Working_with_Objects
 https://toddmotto.com/everything-you-wanted-to-know-about-javascript-scope/
 
-- initiate web audio on touchEnd(); (to comply with iOS9+)
-https://developer.apple.com/library/content/documentation/AppleApplications/Reference/SafariWebContent/HandlingEvents/HandlingEvents.html
 
+- socket.io working on iOS
 
-- synth voice modules
-    - henter parametre lige før den spiller. 
-    -create, start() og stop()
-
+- filter envelope
 - touchEnd (iOS enabled).
-- output module (delay + waveshaper + hp filter + master volume)
-    - skal real-time controleres parameters
+http://www.holovaty.com/writing/ios9-web-audio/
+https://paulbakaus.com/tutorials/html5/web-audio-on-ios/
 
-- Think about filter+delay+waveshaper is now created for every voice.
 - input from accelerometer of phone
 - timing engine / sync
 - check out JavaScript effects from reaper 
+
+
+web audio mailing list
+http://lists.w3.org/Archives/Public/public-audio/2016OctDec/thread.html
+
+keithmcmillan
+https://www.keithmcmillen.com/blog/making-music-in-the-browser-web-audio-api-part-1/

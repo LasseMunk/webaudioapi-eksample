@@ -17,6 +17,7 @@ function oscMessage(data) {
     */
 	if (data.args[1] == 'play'){			 
 		fmPlay();
+        //alert('play');
 	}
 	
 	if (data.args[1] == 'synthParams'){		 

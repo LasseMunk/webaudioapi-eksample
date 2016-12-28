@@ -1,3 +1,8 @@
+// CLIP
+function lmUtil_clip(v, min, max) {
+    return (Math.min(max, Math.max(min, v)));
+}
+
 // Convert from range A --> B, to range X --> Y (similar to SCALE object in MAX/MSP)
 // thanks http://stackoverflow.com/questions/14224535/scaling-between-two-number-ranges/14224813#14224813
 // example: lm_scale(inputValue, [ 300.77, 559.22 ], [ 1, 10 ] );
