@@ -46,6 +46,9 @@ function initiateAudio() {
 	
     globalTempo = 120; // BPM
 	
+	// NB!! Create NULL test to see context is not NULL, so the audio dosn't 'blow up'. 
+
+
 	window.AudioContext = window.AudioContext || window.webkitAudioContext;
 	context = new window.AudioContext();  // Create audio context
 										  // webkit prefix is no longer needed nor recommended
@@ -66,11 +69,14 @@ function initiateAudio() {
 	source.start(context.currentTime);
   */
 
+/*
    var oscillator = context.createOscillator();
  oscillator.frequency.value = 400;
  oscillator.connect(context.destination);
  oscillator.start(0);
  oscillator.stop(.5);   
+ */
+
 };
 
 
