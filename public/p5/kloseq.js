@@ -81,7 +81,7 @@ var Step = function(stepX, stepY) {
         if(this.step === this.indexX && this.active === 1) {
             
             lm_fmOscCar.freq = lmUtil_midiToFreq(kloSeqScale[6-this.indexY]);
-            
+                
             fmPlay();
         }
     };
@@ -105,10 +105,26 @@ var Step = function(stepX, stepY) {
     };
 }
 
+/*
 function mousePressed() {
         for(i = 0; i < kloSeqConf.xSteps; i++) {
             for(j = 0; j < kloSeqConf.ySteps; j++) {
                 stepArray[i][j].activeStateMachine(mouseX, mouseY);
+                document.getElementById("peter").innerHTML = ""+mouseX+","+mouseY;
             };
         };   
-    };
+
+// return false;    
+}; */
+
+function touchEnded() {
+    document.getElementById("peter").innerHTML = mouseX;
+        for(i = 0; i < kloSeqConf.xSteps; i++) {
+            for(j = 0; j < kloSeqConf.ySteps; j++) {
+                stepArray[i][j].activeStateMachine(mouseX, mouseY);
+                
+            };
+        };   
+return false;    
+}; 
+

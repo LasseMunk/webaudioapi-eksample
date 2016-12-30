@@ -3,82 +3,39 @@ var context;
 var fmOut;
 
 var touchEventlisten;
-var lm_initiate = new testClientSystem();
+
+window.addEventListener('load', init, false);
+function init() {
+  try {
+    // Fix up for prefixing
+    window.AudioContext = window.AudioContext||window.webkitAudioContext;
+    context = new AudioContext();
+	fmOut = new synthOutput();
+	globalTempo = 120; // BPM
+  }
+  catch(e) {
+    alert('Web Audio API is not supported in this browser');
+  }
+}
 
 
-function testClientSystem (){
-	var isiOS = 0;				//	<<<< change to test iOS
 
-    // test if iOS, if it is, then wait until 'touchend', it it isn't then just initiate audio
-
-    if(isiOS == 0) {
-       initiateAudio(); 
-       
-    };
-    if (isiOS == 1) {   
-        touchEventlisten = new touchEventlistener();
-    };
-};
-
-function touchEventlistener() {
-    var hasBeenTouched = 0; // don't change
-	
-    document.body.addEventListener('touchend', function(e){
+document.body.addEventListener('touchend', function(e){
         // http://www.javascriptkit.com/javatutors/touchevents.shtml
 		
         // initiate audio if it's the first touch
-        if(hasBeenTouched == 0) {
-        
-			
-            initiateAudio();        // important for making it work on iOS   
-        	
-			hasBeenTouched = 1;     // only call touch event 1
-            
-       };
+		playSound();
     }, false);
+
+function playSound() {
+	console.log('yes');
+  
+   var 	oscillator = context.createOscillator();
+		oscillator.frequency.value = 400;
+		oscillator.connect(context.destination);
+		oscillator.start(0);
+		oscillator.stop(4);  
 }
-
-function deleteTouchEventListener() {   // delete the touchend listener after use, to avoid clicks in audio
-    touchEventlisten = 'event listener deleted';
-}
-
-function initiateAudio() {
-	
-    globalTempo = 120; // BPM
-	
-	// NB!! Create NULL test to see context is not NULL, so the audio dosn't 'blow up'. 
-
-
-	window.AudioContext = window.AudioContext || window.webkitAudioContext;
-	context = new window.AudioContext();  // Create audio context
-										  // webkit prefix is no longer needed nor recommended
-					  
-    // create empty buffer and play sample inside touchend event to enable iOS audio
-    fmOut = new synthOutput();
-
-/*
-    	// create empty buffer
-	var buffer = context.createBuffer(1, 1, 22050);
-	var source = context.createBufferSource();
-	source.buffer = buffer;
-
-	// connect to output (your speakers)
-	source.connect(context.destination);
-
-	// play the file
-	source.start(context.currentTime);
-  */
-
-/*
-   var oscillator = context.createOscillator();
- oscillator.frequency.value = 400;
- oscillator.connect(context.destination);
- oscillator.start(0);
- oscillator.stop(.5);   
- */
-
-};
-
 
 
 /* --------------------------------------------------------------------------- */
