@@ -22,6 +22,8 @@ function oscMessage(data) {
 	
 	if (data.args[1] == 'synthParams'){		 
 		osc_mapFmParameters(data.args); // function is found in fmVoice.js
+        console.log(data.args);
+        // document.getElementById("peter").innerHTML = mouseX, mouseY;
   	}
     if (data.args[1] == 'outputParams'){		 
 		osc_mapOutputParameters(data.args); // function is found in fmVoice.js
