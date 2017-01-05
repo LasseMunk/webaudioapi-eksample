@@ -1,10 +1,10 @@
 // Global scope
-var context;
+//var context;
 var fmOut;
 
-var touchEventlisten;
-
+/*
 window.addEventListener('load', init, false);
+
 function init() {
   try {
     // Fix up for prefixing
@@ -17,32 +17,39 @@ function init() {
     alert('Web Audio API is not supported in this browser');
   }
 }
+*/
 
-
-
+var firstTouch = true;
 document.body.addEventListener('touchend', function(e){
-        // http://www.javascriptkit.com/javatutors/touchevents.shtml
+	
+	if(firstTouch) {
+		firstTouch = false;
 		
-        // initiate audio if it's the first touch
-		playSound();
-    }, false);
+		fmOut = new synthOutput();
+		globalTempo = 120; // BPM
 
+		this.oscillator = context.createOscillator();
+		this.oscillator.connect(context.destination);
+		this.oscillator[this.oscillator.start ? 'start' : 'noteOn'](0);
+		this.oscillator.stop(2);
+		
+	} else {
+		playSound();
+	}
+}, false);
+
+var test = true;
 function playSound() {
 	console.log('yes');
-  
-   var 	oscillator = context.createOscillator();
-		oscillator.frequency.value = 400;
-		oscillator.connect(context.destination);
-		oscillator.start(0);
-		oscillator.stop(4);  
+	 // Create some sweet sweet nodes.
+	test = !test;
+	document.getElementById('debug').innerHTML = test;
+  	fmPlay();
 }
-
 
 /* --------------------------------------------------------------------------- */
 /* ---------------------------   SYNTH VOICE   ------------------------------- */
 /* --------------------------------------------------------------------------- */
-
-
 
 var lm_osc = {
   0: "sine",
@@ -133,8 +140,8 @@ var fmVoice = function () {
 	this.mainFilter 					= context.createBiquadFilter();
 
 	// CREATE PAN
-	this.panStereo 						= context.createStereoPanner();
-	this.panStereo.pan.value 			= 0;
+	//this.panStereo 						= context.createStereoPanner();
+	//this.panStereo.pan.value 			= 0;
 	
 	/*  --------------- CONNECT AUDIO ROUTING --------------- */
 
@@ -146,10 +153,11 @@ var fmVoice = function () {
 	
 	this.osc_carrierGain.gain.value = 0; // no sound before ampEnv is triggered
 
-	this.mainFilter.connect(this.panStereo);
+	this.mainFilter.connect(fmOut.waveshaper);
+	this.mainFilter.connect(fmOut.toDelay);
 
-	this.panStereo.connect(fmOut.waveshaper); // connect the context to DAC
-	this.panStereo.connect(fmOut.toDelay); // connect the context to DAC
+	//this.panStereo.connect(); // connect the context to DAC
+	//this.panStereo.connect(fmOut.toDelay); // connect the context to DAC
 
 	/*  --------------- START OSCILLATORS --------------- */
 
@@ -177,27 +185,26 @@ var fmVoice = function () {
 
 	this.ampEnv = function() {
 
-			p5_isPlaying = 1; // stupid test with p5
+		p5_isPlaying = 1; // stupid test with p5
 
+		this.updateSynthParams();
 
-			this.updateSynthParams();
-	
-			now = context.currentTime;
-			//amp.attackPlusNow = parseFloat(amp.attackPlusNow);
-			lm_fmAmpEnv.attack = parseFloat(lm_fmAmpEnv.attack);
-			attackPlusNow = now + lm_fmAmpEnv.attack;
+		now = context.currentTime;
+		//amp.attackPlusNow = parseFloat(amp.attackPlusNow);
+		lm_fmAmpEnv.attack = parseFloat(lm_fmAmpEnv.attack);
+		attackPlusNow = now + lm_fmAmpEnv.attack;
 
-			this.osc_carrierGain.gain.cancelScheduledValues(0);
-			
-			// Amplitude envelope
-			this.osc_carrierGain.gain.setValueAtTime(0, now);
-			this.osc_carrierGain.gain.setTargetAtTime(1, now, lm_fmAmpEnv.attack);
-			this.osc_carrierGain.gain.setTargetAtTime(0, attackPlusNow, lm_fmAmpEnv.decay); 
-			// target value, start time, ramp time
-			
-			this.osc_modulator.stop(attackPlusNow+lm_fmAmpEnv.decay+0.5); // add 0.5 sec to 
-			this.osc_carrier.stop  (attackPlusNow+lm_fmAmpEnv.decay+0.5); // make sure the env. is done
-			// stop oscillators when done playing
+		this.osc_carrierGain.gain.cancelScheduledValues(0);
+		
+		// Amplitude envelope
+		this.osc_carrierGain.gain.setValueAtTime(0, now);
+		this.osc_carrierGain.gain.setTargetAtTime(1, now, lm_fmAmpEnv.attack);
+		this.osc_carrierGain.gain.setTargetAtTime(0, attackPlusNow, lm_fmAmpEnv.decay); 
+		// target value, start time, ramp time
+		
+		this.osc_modulator.stop(attackPlusNow+lm_fmAmpEnv.decay+0.5); // add 0.5 sec to 
+		this.osc_carrier.stop  (attackPlusNow+lm_fmAmpEnv.decay+0.5); // make sure the env. is done
+		// stop oscillators when done playing
 	};
 };
 

@@ -10,9 +10,7 @@ var fmSeq = function() {
 - Parse data from the sequencer to the synth
 - Address individual phones using their socket.io IDs.
 
-------- */
-
-        this.play = function() {
+------- */this.play = function() {
          
             };
     };

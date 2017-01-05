@@ -118,7 +118,7 @@ function mousePressed() {
 }; */
 
 function touchEnded() {
-    document.getElementById("peter").innerHTML = mouseX;
+    document.getElementById("debug").innerHTML = mouseX;
         for(i = 0; i < kloSeqConf.xSteps; i++) {
             for(j = 0; j < kloSeqConf.ySteps; j++) {
                 stepArray[i][j].activeStateMachine(mouseX, mouseY);

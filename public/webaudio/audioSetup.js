@@ -1,3 +1,5 @@
+// Start off by initializing a new context.
+context = new (window.AudioContext || window.webkitAudioContext)();
 /*
 
 var lm_initiate = new testClientSystem();
